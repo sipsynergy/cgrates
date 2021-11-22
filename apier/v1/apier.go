@@ -705,6 +705,7 @@ type AttrSetActionPlan struct {
 	ActionPlan      []*AttrActionPlan // Set of actions this Actions profile will perform
 	Overwrite       bool              // If previously defined, will be overwritten
 	ReloadScheduler bool              // Enables automatic reload of the scheduler (eg: useful when adding a single action timing)
+	ActionExtraData *map[string]interface{}
 }
 
 type AttrActionPlan struct {
@@ -716,6 +717,7 @@ type AttrActionPlan struct {
 	WeekDays  string  // semicolon separated list of week day names this timing is valid on *any or empty supported
 	Time      string  // String representing the time this timing starts on, *asap supported
 	Weight    float64 // Binding's weight
+	ExtraData interface{}
 }
 
 func (attr *AttrActionPlan) getRITiming(dm *engine.DataManager) (timing *engine.RITiming, err error) {
@@ -775,6 +777,13 @@ func (apierSv1 *APIerSv1) SetActionPlan(attrs *AttrSetActionPlan, reply *string)
 		ap := &engine.ActionPlan{
 			Id: attrs.Id,
 		}
+		/**
+		@sipsynergy Check if we have extra data to add to the timings
+		Similar to the SetBalance func in accounts.go
+		*/
+		if attrs.ActionExtraData != nil && len(*attrs.ActionExtraData) != 0 {
+			ap.ExtraData = *attrs.ActionExtraData
+		}
 		for _, apiAtm := range attrs.ActionPlan {
 			if exists, err := apierSv1.DataManager.HasData(utils.ActionPrefix, apiAtm.ActionsId, ""); err != nil {
 				return utils.NewErrServerError(err)
@@ -785,11 +794,14 @@ func (apierSv1 *APIerSv1) SetActionPlan(attrs *AttrSetActionPlan, reply *string)
 			if err != nil {
 				return err
 			}
+
 			ap.ActionTimings = append(ap.ActionTimings, &engine.ActionTiming{
 				Uuid:      utils.GenUUID(),
 				Weight:    apiAtm.Weight,
 				Timing:    &engine.RateInterval{Timing: timing},
 				ActionsID: apiAtm.ActionsId,
+				// @sipsynergy Pass ExtraData into the ActionTiming
+				ExtraData: apiAtm.ExtraData,
 			})
 		}
 		if err := apierSv1.DataManager.SetActionPlan(ap.Id, ap, true, utils.NonTransactional); err != nil {

@@ -970,6 +970,18 @@ func export(ub *Account, a *Action, acs Actions, _ *FilterS, extraData interface
 				utils.MetaEventType: utils.AccountUpdate,
 			},
 		}
+		/**
+		@sipsynergy Allow appending ExtraData to the CGREvent as additional fields
+		(was previously ignored through switch)
+		BUT only if you can cast it to a go compatible JSON object structure
+		*/
+		if extraData != nil {
+			if data, canCast := extraData.(map[string]interface{}); canCast {
+				for k, v := range data {
+					cgrEv.Event[k] = v
+				}
+			}
+		}
 	case extraData != nil:
 		ev, canCast := extraData.(*utils.CGREvent)
 		if !canCast {

@@ -70,6 +70,7 @@ type ActionPlan struct {
 	Id            string // informative purpose only
 	AccountIDs    utils.StringMap
 	ActionTimings []*ActionTiming
+	ExtraData     interface{}
 }
 
 func (apl *ActionPlan) RemoveAccountID(accID string) (found bool) {
