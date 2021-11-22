@@ -105,7 +105,7 @@ func TestActionPlanClone(t *testing.T) {
 				},
 			},
 		},
-		// @sipsynergy Add extra data to ActionPlan for test
+		// @sipsynergy Add extra data to ActionPlan to test the Clone() method
 		ExtraData: map[string]interface{}{
 			"Extra1": nil,
 		},
