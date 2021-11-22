@@ -85,6 +85,7 @@ func (apl *ActionPlan) Clone() (interface{}, error) {
 	cln := &ActionPlan{
 		Id:         apl.Id,
 		AccountIDs: apl.AccountIDs.Clone(),
+		ExtraData:  apl.ExtraData,
 	}
 	if apl.ActionTimings != nil {
 		cln.ActionTimings = make([]*ActionTiming, len(apl.ActionTimings))

@@ -100,7 +100,14 @@ func TestActionPlanClone(t *testing.T) {
 				Timing: &RateInterval{
 					Weight: 0.7,
 				},
+				ExtraData: map[string]interface{}{
+					"Extra1": nil,
+				},
 			},
+		},
+		// @sipsynergy Add extra data to ActionPlan for test
+		ExtraData: map[string]interface{}{
+			"Extra1": nil,
 		},
 	}
 	clned, err := at1.Clone()
@@ -118,6 +125,9 @@ func TestActionTimingClone(t *testing.T) {
 		Uuid:      "Uuid_test",
 		ActionsID: "ActionsID_test",
 		Weight:    0.7,
+		ExtraData: map[string]interface{}{
+			"Extra1": nil,
+		},
 	}
 	if cloned := at.Clone(); !reflect.DeepEqual(at, cloned) {
 		t.Errorf("Expecting: %+v,\n received: %+v", at, cloned)
